@@ -14,5 +14,5 @@ Make sure you have WordPress already running, along with the the [WP REST API](h
 * Run `npm install`
 * Run `bower update`
 
-To re-compile both the .css and .js files, run `gulp`
-To re-compile either the .css , or .js files run `gulp css`/`gulp js` respectively
+* To re-compile both the .css and .js files, run `gulp`
+* To re-compile either the .css , or .js files run `gulp css`/`gulp js` respectively
