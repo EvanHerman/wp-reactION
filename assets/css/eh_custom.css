@@ -1,0 +1,43 @@
+/** CUSTOM STYLES **/
+.featured-post-image-parent {
+	float: left;
+	display: inline-block;
+}
+
+.featured-post-image {
+	display: block; 
+	float: left;
+	margin-right: 1em;
+}
+
+
+.homepage-article-container {
+	float: left;
+	height: 100%;
+	opacity: 0;
+	margin: 2em 0;
+}
+	
+	.homepage-article-container h3 {
+		margin-top: 0;
+	}
+	
+.homepage-article-container button.edit_post {
+	margin-left: .5em;
+}
+
+/** Post Meta **/
+.post-meta {
+	display: block;
+	width: 100%;
+	margin: .5em 0;
+}
+
+.homepage-article-container .btn {
+	position: absolute;
+	bottom: 0;
+}
+
+.homepage-article-container .btn.edit_post {
+	margin-left: 100px;
+}
