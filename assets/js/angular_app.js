@@ -12,22 +12,28 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 	$stateProvider
 	.state('list', {
 		url: '/',
-		template: '<reactposts data="posts" id="test"></reactposts>',
-		controller: 'reang_controller'
+		views: {
+			"content-view": { 
+				template: '<reactposts data="posts" id="test"></reactposts>',
+				controller: 'reang_controller'
+			},
+		}
 	})
 	.state('single', {
 		url: '/post/:id',
-		template: function( $scope ){
-			return '<reactposts data="posts" id="test"></reactposts>'
-		},
-		controller: function( $scope, $stateParams, Posts ) {
-			$scope.post_id = $stateParams.id;
-			$scope.getPosts = function(){
-				Posts.get({ID: $stateParams.id}, function(res){
-					$scope.posts = res;
-				});
+		views: {
+			"content-view": { 
+				template: '<reactposts data="posts" id="test"></reactposts>',
+				controller: function( $scope, $stateParams, Posts ) {
+					$scope.post_id = $stateParams.id;
+					$scope.getPosts = function(){
+						Posts.get({ID: $stateParams.id}, function(res){
+							$scope.posts = res;
+						});
+					}
+					$scope.getPosts();
+				}
 			}
-			$scope.getPosts();
 		}
 	});
 	//$locationProvider.html5Mode(true);

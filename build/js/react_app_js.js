@@ -2,6 +2,9 @@ var $ = jQuery;
 var Post = React.createClass({
 	displayName: "Post",
 	render: function() {
+		/*
+		*	Hoemepage post rendering
+		*/
 		if (! this.props.single) {
 			return React.createElement("article", {
 					className: 'homepage-article-container'
@@ -50,6 +53,7 @@ var Post = React.createClass({
 		}
 	}
 });
+
 var APP = React.createClass({
 	displayName: "APP",
 	render: function() {

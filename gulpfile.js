@@ -25,6 +25,9 @@ gulp.task('js', function(){
 	gulp.src('assets/js/*.js')
 		.pipe(concat('js/scripts.js'))
 		.pipe(gulp.dest('build'));
+	gulp.src('assets/js/nav-menu/*.js')
+		.pipe(concat('js/nav-menu-script.min.js'))
+		.pipe(gulp.dest('build'));
 });
 
 gulp.task('default', ['sass', 'js'], function() {

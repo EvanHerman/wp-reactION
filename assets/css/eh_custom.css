@@ -41,3 +41,21 @@
 .homepage-article-container .btn.edit_post {
 	margin-left: 100px;
 }
+
+/** Nav Styles **/
+.eh-nav-disclaimer {
+	position: absolute;
+	bottom: 2em;
+	color: #b8b7ad;
+}
+
+.eh-nav-disclaimer em small a {
+	padding: 0 !important;
+	display: inherit;
+	width: auto;
+}
+
+.eh-nav-disclaimer em small .fa-heart {
+	color: #D06073;
+}
+/** End Nav Styles **/
