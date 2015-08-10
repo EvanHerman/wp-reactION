@@ -5,6 +5,7 @@ class react_ang_theme {
 	function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, '__react_ang_scripts' ) );
 		add_action( 'print_scripts', array( $this, '_react_ang_print_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, '__react_ang_admin_scripts' ) ); // icon picker menu chooser
 	}
 	
 	function __react_ang_scripts() {
@@ -13,8 +14,8 @@ class react_ang_theme {
 		
 		wp_localize_script( 'react_ang_main', 'ajaxInfo', 
 			array( 
-				'json_url' => get_bloginfo('wpurl').'/wp-json/',
-				'nonce' => wp_create_nonce( 'wp_json' ),
+				'json_url' => esc_url_raw( trailingslashit( rest_url() ) ),
+				'nonce' => wp_create_nonce( 'wp_rest' ),
 				'template_directory' => get_template_directory_uri(),
 				'site_url' => get_bloginfo('wpurl')
 			) 
@@ -35,6 +36,14 @@ class react_ang_theme {
 		// enqueue main styles
 		wp_enqueue_style( 'styles', get_template_directory_uri().'/build/css/styles.css', array(), null, 'all' );
 		
+	}
+	
+	public function __react_ang_admin_scripts( $hook ) {
+		if( 'nav-menus.php' == $hook ) {
+			wp_enqueue_style( 'fa-styles', get_template_directory_uri() . '/assets/fonts/font-awesome-4.4.0/css/font-awesome.min.css', array(), null, 'all' );
+			wp_enqueue_style( 'icon-picker-styles', get_template_directory_uri().'/build/css/admin-iconpicker-styles.min.css', array( 'fa-styles' ), null, 'all' );
+			wp_enqueue_script( 'icon-picker-scripts', get_template_directory_uri().'/build/js/admin-iconpicker-script.min.js', array( 'jquery' ), null, true );
+		}
 	}
 	
 	function _react_ang_print_scripts() {
@@ -78,12 +87,39 @@ add_action( 'wp_enqueue_scripts', 'euqueue_script_styles_header' );
 
 
 // Same handler function...
+/*
+*	Get post attachment URL
+*/
 add_action( 'wp_ajax_get_attachment_URL', 'get_attachment_URL_callback' );
 function get_attachment_URL_callback() {
 	global $wpdb;
 	$attachment_ID = intval( $_POST['attachment_id'] );
     $attachment_src = wp_get_attachment_image_src( $attachment_ID, 'full' );
 	wp_send_json( esc_url( urlencode( $attachment_src[0] ) ) );
+	wp_die();
+}
+
+/*
+*	Get nav menu items
+*	Ajax handler
+*/	
+add_action( 'wp_ajax_get_main_nav', 'get_main_nav_callback' );
+add_action( 'wp_ajax_no_priv_get_main_nav', 'get_main_nav_callback' );
+function get_main_nav_callback() {
+	if( has_nav_menu( 'main_nav' ) ) {
+		$nav_args = array(
+			'theme_location' => 'main_nav',
+			'walker' => new wp_reaction_walker_nav_menu,
+			'items_wrap' => '%3$s'
+		);
+		$nav_menu = wp_nav_menu( $nav_args );
+	} else {
+		if( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$nav_menu = '<a href="' . esc_url( admin_url( 'nav-menus.php' ) ) . '">' . __( 'Register a menu to get started', 'wp-reaction' ) . '</a>';
+	}
+	echo 'test';
 	wp_die();
 }
 
@@ -102,10 +138,26 @@ if ( ! function_exists( '_react_theme_setup' ) ) :
 		) );
 				
 	}
-	
+		
 endif;
 add_action( 'after_setup_theme', '_react_theme_setup' );
 
+/**
+*	Extend the WP API with customendpoints
+*	@since 0.1
+*	Help Resource: http://v2.wp-api.org/extending/adding/
+**/
+
+/* 
+*	Include menu endpoint extension class
+*	@ /menus/
+*	@ /menu/<id>
+*	@ /menu-locations/
+*	@ /menu-location/<menu-location> (eg: main_nav)
+*/
+include_once dirname( __FILE__ ) . '/lib/api-endpoint-extensions/menu-extension.php';
+
+/** End WP API Endpoint Extensions **/
 
 /***
 *	Custom Nav Walker/Edit Menu Walker Functions	

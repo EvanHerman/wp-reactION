@@ -145,32 +145,7 @@ class Reaction_Walker_Nav_Menu_Edit extends Walker_Nav_Menu  {
 	                    <?php _e( 'Title Attribute' ); ?><br />
 	                    <input type="text" id="edit-menu-item-attr-title-<?php echo $item_id; ?>" class="widefat edit-menu-item-attr-title" name="menu-item-attr-title[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->post_excerpt ); ?>" />
 	                </label>
-	            </p>
-	            <p class="field-link-target description">
-	                <label for="edit-menu-item-target-<?php echo $item_id; ?>">
-	                    <input type="checkbox" id="edit-menu-item-target-<?php echo $item_id; ?>" value="_blank" name="menu-item-target[<?php echo $item_id; ?>]"<?php checked( $item->target, '_blank' ); ?> />
-	                    <?php _e( 'Open link in a new window/tab' ); ?>
-	                </label>
-	            </p>
-	            <p class="field-css-classes description description-thin">
-	                <label for="edit-menu-item-classes-<?php echo $item_id; ?>">
-	                    <?php _e( 'CSS Classes (optional)' ); ?><br />
-	                    <input type="text" id="edit-menu-item-classes-<?php echo $item_id; ?>" class="widefat code edit-menu-item-classes" name="menu-item-classes[<?php echo $item_id; ?>]" value="<?php echo esc_attr( implode(' ', $item->classes ) ); ?>" />
-	                </label>
-	            </p>
-	            <p class="field-xfn description description-thin">
-	                <label for="edit-menu-item-xfn-<?php echo $item_id; ?>">
-	                    <?php _e( 'Link Relationship (XFN)' ); ?><br />
-	                    <input type="text" id="edit-menu-item-xfn-<?php echo $item_id; ?>" class="widefat code edit-menu-item-xfn" name="menu-item-xfn[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->xfn ); ?>" />
-	                </label>
-	            </p>
-	            <p class="field-description description description-wide">
-	                <label for="edit-menu-item-description-<?php echo $item_id; ?>">
-	                    <?php _e( 'Description' ); ?><br />
-	                    <textarea id="edit-menu-item-description-<?php echo $item_id; ?>" class="widefat edit-menu-item-description" rows="3" cols="20" name="menu-item-description[<?php echo $item_id; ?>]"><?php echo esc_html( $item->description ); // textarea_escaped ?></textarea>
-	                    <span class="description"><?php _e('The description will be displayed in the menu if the current theme supports it.'); ?></span>
-	                </label>
-	            </p>        
+	            </p>    
 	            <?php
 	            /* New fields insertion starts here */
 	            ?>      

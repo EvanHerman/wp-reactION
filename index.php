@@ -8,21 +8,7 @@
 		<div class="menu-wrap">
 			<nav class="menu">
 				<div class="icon-list">
-					<?php 
-						if( has_nav_menu( 'main_nav' ) ) {
-							$nav_args = array(
-								'theme_location' => 'main_nav',
-								'walker' => new wp_reaction_walker_nav_menu,
-								'items_wrap' => '%3$s'
-							);
-							wp_nav_menu( $nav_args );
-						} else {
-							if( ! current_user_can( 'manage_options' ) ) {
-								return;
-							}
-							?><a href="<?php echo esc_url( admin_url( 'nav-menus.php' ) ); ?>"><?php _e( 'Register a menu to get started', 'wp-reaction' ); ?></a><?php
-						}
-					?>
+					<div ui-view="main-nav"></div>
 					<p class="eh-nav-disclaimer"><em><small><?php printf( __( 'Reaction built with %s by <a href="%s" title="Evan Herman">Evan Herman</a>', 'wp-reaction' ), '<i class="fa fa-heart"></i>', esc_url( 'https://www.evan-herman.com' ) ); ?></em></small></p>
 				</div>
 			</nav>
@@ -39,15 +25,18 @@
 			
 				<div class="row">
 					<div class="col-sm-12">
+						
+						<div id="test-comment-box"></div>
+						
 						<h1>
 							<a ui-sref="list"><?php echo bloginfo( 'name' ); ?></a>
 						</h1>
-						
+								
 						<!-- UI VIEW -->
 						<div ui-view="content-view"></div>
 									
 						<!-- EDIT MODAL -->
-						<div class="modal fade" id="editPost" tabindex="-1" role="dialog" aria-labelledby="editPost" aria-hidden="true" >
+						<div class="modal fade" id="editPost" tabindex="-1" role="dialog" aria-labelledby="editPost" aria-hidden="true" ng-controller="editPostCtrl">
 							<div class="modal-dialog">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -57,10 +46,10 @@
 									<div class="modal-body">
 										<form ng-submit="savePost()">
 											<div class="form-group">
-												<input ng-model="editPost.title" class="form-control" />
+												<input ng-model="editPost.title.rendered" class="form-control" />
 											</div>
 											<div class="form-group">
-												<textarea ng-model="editPost.content" class="form-control" rows="10"></textarea>
+												<textarea ng-model="editPost.content.rendered" class="form-control" rows="10"></textarea>
 											</div>
 											<button type="submit" class="btn btn-default">Save Post</button>
 										</form>

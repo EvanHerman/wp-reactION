@@ -22,9 +22,9 @@
 		margin-top: 0;
 	}
 	
-.homepage-article-container button.edit_post {
+.homepage-article-container button.edit_post { 
 	margin-left: .5em;
-}
+} 
 
 /** Post Meta **/
 .post-meta {

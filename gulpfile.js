@@ -10,6 +10,9 @@ gulp.task('sass', function() {
 	gulp.src('assets/css/*.css')
 		.pipe(concat('css/styles.css'))
 		.pipe(gulp.dest('build'));
+	gulp.src('assets/css/admin/*.css')
+		.pipe(concat('css/admin-iconpicker-styles.min.css'))
+		.pipe(gulp.dest('build'));
 });
 
 gulp.task('js', function(){
@@ -28,6 +31,9 @@ gulp.task('js', function(){
 	gulp.src('assets/js/nav-menu/*.js')
 		.pipe(concat('js/nav-menu-script.min.js'))
 		.pipe(gulp.dest('build'));
+	gulp.src('assets/js/admin/*.min.js')
+		.pipe(concat('js/admin-iconpicker-script.min.js'))
+		.pipe(gulp.dest('build'));
 });
 
 gulp.task('default', ['sass', 'js'], function() {
@@ -35,5 +41,9 @@ gulp.task('default', ['sass', 'js'], function() {
 
 gulp.task('watch', function(){
 	gulp.watch('assets/scss/*.scss', ['sass'] );
+	gulp.watch('assets/css/*.css', ['sass'] );
+	gulp.watch('assets/css/nav-menu/*.css', ['sass'] );
+	gulp.watch('assets/css/admin/*.css', ['sass'] );
 	gulp.watch('assets/js/*.js', ['js'] );
-})
+	gulp.watch('assets/js/admin/*.js', ['js'] );
+});

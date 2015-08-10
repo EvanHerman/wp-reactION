@@ -8,6 +8,7 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 	};
 }])
 .config(function($stateProvider, $urlRouterProvider) {
+	// console.log( $stateProvider );
 	$urlRouterProvider.otherwise('/');
 	$stateProvider
 	.state('list', {
@@ -16,6 +17,10 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 			"content-view": { 
 				template: '<reactposts data="posts" id="test"></reactposts>',
 				controller: 'reang_controller'
+			},
+			"main-nav": {
+				template: '<reactmainnav data="nav_items" id="nav_items"></react-main-nav>',
+				controller: 'reang_nav_controller'
 			},
 		}
 	})
@@ -33,7 +38,31 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 					}
 					$scope.getPosts();
 				}
-			}
+			},
+			"main-nav": {
+				template: '<reactmainnav data="nav_items" id="nav_items"></react-main-nav>',
+				controller: 'reang_nav_controller'
+			},
+		}
+	}).state('page', {
+		url: '/pages/:id',
+		views: {
+			"content-view": { 
+				template: '<reactposts data="page" id="page"></reactposts>',
+				controller: function( $scope, $stateParams, Page ) {
+					$scope.post_id = $stateParams.id;
+					$scope.getPage = function(){
+						Page.get({ID: $stateParams.id}, function(res){
+							$scope.page = res;
+						});
+					}
+					$scope.getPage();
+				}
+			},
+			"main-nav": {
+				template: '<reactmainnav data="nav_items" id="nav_items"></react-main-nav>',
+				controller: 'reang_nav_controller'
+			},
 		}
 	});
 	//$locationProvider.html5Mode(true);
@@ -50,10 +79,21 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 	return $resource(ajaxInfo.json_url + 'wp/v2/posts/:ID?_wp_json_nonce='+ajaxInfo.nonce, {
 		ID: '@ID'
 	},{
-        'update': { method:'PUT' }
+        'update': { ID: '@ID', method: 'PUT' }
     });
 })
+.factory('Page', function($resource) {
+	return $resource(ajaxInfo.json_url + 'wp/v2/pages/:ID?_wp_json_nonce='+ajaxInfo.nonce, {
+		ID: '@ID'
+	},{
+        'update': { ID: '@ID', method: 'PUT' }
+    });
+})
+.factory('MainNavigation', function($resource) {
+	return $resource(ajaxInfo.json_url + 'wp-reaction/v1/menu-location/main_nav?_wp_json_nonce='+ajaxInfo.nonce );
+})
 .controller( 'reang_controller', ['$rootScope', '$scope', 'Posts', function($rootScope, $scope, Posts){
+	// console.log( 'test' );
 	$scope.getPosts = function(){
 		Posts.query({}, function(res){
 			$scope.posts = res;
@@ -62,7 +102,7 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 	$scope.getPosts();
 	$('body').on('click', '.edit_post', function(e) {
 		var post_id = $(this).data('id');
-		console.log(post_id);
+		console.log($scope);
 		
 		Posts.get({ID:post_id}, function(res){
 			$scope.editPost = res;
@@ -72,13 +112,23 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 	
 	$scope.savePost = function() {
 		console.log('saving..', $scope.editPost);
-		$scope.editPost.content_raw = $scope.editPost.content;
-		Posts.update($scope.editPost, function(res){
+		$scope.editPost.content_raw = $scope.editPost.content.rendered;
+		Posts.update({ID:$scope.editPost.id}, function(res){
 			$scope.getPosts();
-			$('#editPost').modal('hide');
-		})
+			$('#editPost').hide();
+			$('.modal-backdrop').hide();
+		});
 	}
 	
+}])
+.controller( 'reang_nav_controller', ['$rootScope', '$scope', 'MainNavigation', function($rootScope, $scope, MainNavigation){
+	// query the nav items
+	$scope.getMainNav = function(){
+		MainNavigation.query({}, function(res) {
+			$scope.nav_items = res;
+		});
+	}
+	$scope.getMainNav();	
 }])
 .directive('reactposts', function($rootScope) {
 	return {
@@ -102,13 +152,27 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 		}
 	}
 })
+.directive('reactmainnav', function($rootScope) {
+	return {
+		scope: { data: '=', id: '@' },
+		link: function($scope,elm,attrs) {
+			$scope.$watch('data', function(n,o) {
+				if( n && n.length ) {
+					$rootScope.react_app = React.render(
+						React.createElement(MainNavigation, {data:$scope.data}),
+						elm[0]
+					)
+				}
+			});
+		}
+	}
+})
 .controller( 'editPostCtrl', ['$rootScope', '$scope', 'Posts', function($rootScope, $scope, Posts) {
 	console.log('editing..');
 	
 	$('body').on('click', '.edit_post', function(e) {
 		var post_id = $(this).data('id');
-		console.log(post_id);
-		alert( 'test' );
+		
 		Posts.get({ID:post_id}, function(res){
 			$scope.editPost = res;
 		});
@@ -116,14 +180,14 @@ reang = angular.module('reang', ['ngResource', 'ui.router'])
 	})
 	
 	$scope.savePost = function() {
-		console.log('saving..', $scope.editPost);
-		$scope.editPost.content_raw = $scope.editPost.content;
-		Posts.update($scope.editPost, function(res){
+		console.log('saving..', $scope.editPost.id);
+		$scope.editPost.content_raw = $scope.editPost.content.rendered;
+		Posts.update({ID:$scope.editPost.id}, function(res){
 			Posts.query({}, function(res){
-				$rootScope.react_app.data = res;
-				$('#editPost').modal('hide');
-				console.log( $rootScope.react_app.data );
+				$scope.getPosts();
+				$('#editPost').hide();
+				$('.modal-backdrop').hide();
 			})
-		})
+		});
 	}
 }]);

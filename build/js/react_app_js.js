@@ -5,7 +5,8 @@ var Post = React.createClass({
 		/*
 		*	Hoemepage post rendering
 		*/
-		if (! this.props.single) {
+		// console.log( this.props );
+		if ( ! this.props.single ) {
 			return React.createElement("article", {
 					className: 'homepage-article-container'
 				}, 
@@ -36,9 +37,11 @@ var Post = React.createClass({
 				React.createElement("button", {
 					onClick: this.editPost,
 					"data-id": this.props.id,
-					className: "edit_post btn btn-primary"
-				}, 
-			"edit post" ) );
+					className: "edit_post btn btn-primary",
+					"data-toggle": "modal",
+					"data-target": "#editPost"
+				}, "edit post" ) 
+			);
 		} else {
 			return React.createElement("article", null, React.createElement("h3", null, this.props.title), React.createElement("div", {
 				dangerouslySetInnerHTML: {
@@ -47,12 +50,28 @@ var Post = React.createClass({
 			}), React.createElement("button", {
 				onClick: this.editPost,
 				"data-id": this.props.id,
-				className: "edit_post btn btn-primary"
-			}, "edit post"));
+				 className: "edit_post btn btn-primary",
+				 "data-toggle": "modal",
+				 "data-target": "#editPost"
+			}, "Edit Post"));
 
 		}
 	}
 });
+
+/*
+*	Render the comment box
+
+React.render(
+  React.createElement(CommentBox, null),
+  document.getElementById('test-comment-box')
+);
+*/
+/*
+*	End test comment box
+*/
+
+/* End Main Nav Class */
 
 var APP = React.createClass({
 	displayName: "APP",
@@ -60,13 +79,50 @@ var APP = React.createClass({
 		if (this.props && this.props.data.length) {
 			var posts = this.props.data.map(function(post) {
 				post.single = false;
-				return React.createElement(Post, post);
+				return posts_container = React.createElement(Post, post);
 			});
 			return React.DOM.div(null, posts);
 		} else if (this.props && this.props.data.id) {
+			// console.log( this.props );
 			this.props.data.single = true;
 			return React.createElement(Post, this.props.data);
 		}
+	}
+});
+
+/**
+*	Main Navigation Class
+*	Based On: https://facebook.github.io/react/docs/tutorial.html
+*/
+var MainNavigation = React.createClass({
+	displayName: 'MainNav',
+	render: function() {
+		if (this.props && this.props.data.length) {
+			var nav_items = this.props.data.map(function(navigation_item) {
+				return nav_container = React.createElement(NavItem, navigation_item);
+			});
+			return React.DOM.div(null, nav_items);
+		}		
+	}
+});
+
+var NavItem = React.createClass({
+	displayName: 'navItem',
+	render: function() {
+		/* Setup the permalink based on the post type (post/page/custom) */
+		if( 'custom' != this.props.type ) {
+			var permalink = ajaxInfo.site_url + '/#/' + this.props.type_label.toLowerCase() + 's/' + this.props.object_id;
+		} else {
+			var permalink = this.props.url;
+		}
+		return React.createElement("a", {
+			href: permalink,
+			className: 'menu-link main-menu-link'
+		}, React.createElement("i", {
+			className: this.props.icon_class
+		}, null ),
+			React.createElement("span", null, this.props.title ) 
+		)
 	}
 });
 
@@ -98,4 +154,14 @@ function append_featured_images( attachment_id ) {
 			}
 		});
 	}
+}
+
+function get_main_navigation() {
+	var data = {
+		'action': 'get_main_nav'
+	};
+	$.post( ajax_data.ajax_url, data, function(response) {
+		$( '#menu-main-nav-container' ).html( response );
+	});
+	
 }

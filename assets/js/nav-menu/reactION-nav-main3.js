@@ -64,4 +64,15 @@
 
 	init();
 
+	
+	$( 'body' ).on( 'click', '.menu-link', function() {
+		if( jQuery( this ).hasClass( 'menu-link-active' ) ) {
+			return;
+		}
+		jQuery( '.menu-link' ).removeClass( 'current-menu-item' );
+		jQuery( this ).addClass( 'current-menu-item' );
+		toggleMenu();
+	});
+
+	
 })();
