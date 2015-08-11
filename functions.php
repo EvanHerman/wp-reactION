@@ -84,9 +84,18 @@ add_action( 'wp_enqueue_scripts', 'euqueue_script_styles_header' );
 *	@Compiled by Evan Herman / Yikes Inc.
 **/
 
+/*
+* User Logged In check
+*/
+add_action('wp_ajax_user_check', 'UserCheck');
+add_action('wp_ajax_nopriv_user_check', 'UserCheck');
+function UserCheck(){
+	if(is_user_logged_in()){
+		echo 'true';
+	}
+die();
+}
 
-
-// Same handler function...
 /*
 *	Get post attachment URL
 */
